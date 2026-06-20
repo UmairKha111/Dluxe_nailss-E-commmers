@@ -1,0 +1,6 @@
+{
+  "name": "D Luxe Nails",
+  "description": "Premium Handmade Press-On Nails E-Commerce Store with custom options, instant WhatsApp ordering, and a luxury beauty experience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
