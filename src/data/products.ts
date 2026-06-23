@@ -2,8 +2,8 @@ import { Product } from '../types';
 
 export const products: Product[] = [
   {
-    id: 'glazed-marshmallow',
-    name: ' Marshmallow Solitaire',
+    id: 'Rich energy',
+    name: ' Rich energy',
     price: 799,
     originalPrice: 1499,
     description: 'A glowing, dreamy nude pink base loaded with our signature high-shine pearl chrome glaze. Designed to catch light with every gesture, this minimalist luxury set elevates any outfit with its chic, subtle opulence.',
@@ -200,8 +200,8 @@ export const products: Product[] = [
   
   
   {
-    id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+    id: 'Party vibes',
+    name: 'Party vibes',
     price: 799,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -228,8 +228,8 @@ export const products: Product[] = [
     isAvailable: true
   },
   {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Beach nails',
+    name: 'Beach nails',
     price: 799,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -250,15 +250,15 @@ export const products: Product[] = [
     color: ['White', 'Gold', 'Grey'],
     occasion: ['Festival', 'Party', 'Bridal'],
     rating: 4.9,
-    reviewsCount: 50,
+    reviewsCount: 15,
     badges: ['Best Seller'],
     sizes: ['XS', 'S', 'M', 'L', 'Custom'],
     isAvailable: true
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Soft summer set',
+    name: 'Soft summer set',
     price: 799,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -286,8 +286,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Premium cateye',
+    name: 'Premium cateye',
     price: 799,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -315,8 +315,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Bold shades',
+    name: 'Bold shades',
     price: 749,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -344,8 +344,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Classy white with gold chrome',
+    name: 'Classy white with gold chrome',
     price: 699,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -373,8 +373,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Spider nails',
+    name: 'Spider nails',
     price: 799,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -402,8 +402,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Summer vibes',
+    name: 'Summer vibes',
     price: 749,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -431,8 +431,8 @@ export const products: Product[] = [
   }
   , 
   {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Summer nails',
+    name: 'Summer nails',
     price: 899,
     originalPrice: 1149,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -460,8 +460,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Cherry noir',
+    name: 'Cherry noir',
     price: 849,
     originalPrice: 949,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -489,8 +489,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Baddie vibes',
+    name: 'Baddie vibes',
     price: 799,
     originalPrice: 1199,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -518,8 +518,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Summer nails',
+    name: 'Summer nails',
     price: 1199,
     originalPrice: 1549,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -547,8 +547,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Cherry noir',
+    name: 'Cherry noir',
     price: 849,
     originalPrice: 999,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -576,8 +576,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Summer nails',
+    name: 'Summer nails',
     price: 899,
     originalPrice: 999,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -605,8 +605,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Vintage bloom',
+    name: 'Vintage bloom',
     price: 799,
     originalPrice: 999,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -634,8 +634,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Beach nails',
+    name: 'Beach nails',
     price: 999,
     originalPrice: 1299,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -663,8 +663,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Summer nails',
+    name: 'Summer nails',
     price: 1499,
     originalPrice: 1849,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -692,8 +692,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Celestial clover',
+    name: 'Celestial clover',
     price: 749,
     originalPrice: 999,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -721,8 +721,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Bold cateye with chrome',
+    name: 'Bold cateye with chrome',
     price: 699,
     originalPrice: 1049,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -750,8 +750,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Baddie vibes',
+    name: 'Baddie vibes',
     price: 799,
     originalPrice: 899,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -779,8 +779,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Beach nails',
+    name: 'Beach nails',
     price: 749,
     originalPrice: 1049,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
@@ -808,8 +808,8 @@ export const products: Product[] = [
   }
   ,
    {
-  id: 'prod-gold-flakes-marble',
-    name: 'Opulent Golden Flakes & Marble',
+  id: 'Soft pastel color set',
+    name: 'Soft pastel color set',
     price: 899,
     originalPrice: 1100,
     description: 'A genuine luxury statement set inspired by premium Calacatta gold veins. High-gloss pristine milky white is combined with smoky grey quartz marbling, embellished with real gold foil sheets and metallic outlines.',
