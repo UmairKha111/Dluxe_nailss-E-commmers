@@ -349,12 +349,12 @@ export const Home: React.FC = () => {
         {/* Curation photos grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
           {[
-            { img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=500', href: siteConfig.instagramUrl },
-            { img: 'https://images.unsplash.com/photo-1607779097040-26e80aa78e66?q=80&w=500', href: siteConfig.instagramUrl },
-            { img: 'https://images.unsplash.com/photo-1632345031435-8797b2d58045?q=80&w=500', href: siteConfig.instagramUrl },
-            { img: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=500', href: siteConfig.instagramUrl },
-            { img: 'https://images.unsplash.com/photo-1629191122116-378345781a98?q=80&w=500', href: siteConfig.instagramUrl },
-            { img: 'https://images.unsplash.com/photo-1604242692760-2f7b0c26856d?q=80&w=500', href: siteConfig.instagramUrl }
+            { img: 'https://i.ibb.co/Kj9kqmH4/566bf088-f133-4d0e-a703-86cc39495c4f.jpg', href: siteConfig.instagramUrl },
+            { img: 'https://i.ibb.co/5xBbH6xb/0834c078-78c9-48c5-8e2e-b8794cabe394.jpg', href: siteConfig.instagramUrl },
+            { img: 'https://i.ibb.co/LzsQPnMk/d9e87cb1-f4a4-489c-89a2-0ee4609abdf0.jpg', href: siteConfig.instagramUrl },
+            { img: 'https://i.ibb.co/Dg17CrJH/82b2fcb4-d77f-4d40-b007-1b5477b67cf5.jpg', href: siteConfig.instagramUrl },
+            { img: 'https://i.ibb.co/DDH2y1Gf/1b329673-e5e6-43e8-aa01-6d48baea924c.jpg', href: siteConfig.instagramUrl },
+            { img: 'https://i.ibb.co/xKBjNVD4/70c89c12-d447-413c-bcb3-70f8ddbf2b83.jpg', href: siteConfig.instagramUrl }
           ].map((item, idx) => (
             <a
               key={idx}
