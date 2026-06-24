@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { CartItem, Product, Coupon } from '../types';
 import { activeCoupons } from '../data/offers';
-
+ 
 interface CartContextType {
   cart: CartItem[];
   wishlist: string[];
@@ -22,9 +22,9 @@ interface CartContextType {
   applyCoupon: (code: string) => { success: boolean; message: string };
   removeCoupon: () => void;
 }
-
+ 
 const CartContext = createContext<CartContextType | undefined>(undefined);
-
+ 
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
@@ -32,42 +32,42 @@ export const useCart = () => {
   }
   return context;
 };
-
+ 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
     const savedCart = localStorage.getItem('dluxe_cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
-
+ 
   const [wishlist, setWishlist] = useState<string[]>(() => {
     const savedWishlist = localStorage.getItem('dluxe_wishlist');
     return savedWishlist ? JSON.parse(savedWishlist) : [];
   });
-
+ 
   const [recentlyViewed, setRecentlyViewed] = useState<string[]>(() => {
     const savedRV = localStorage.getItem('dluxe_rv');
     return savedRV ? JSON.parse(savedRV) : [];
   });
-
+ 
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [activeCoupon, setActiveCoupon] = useState<Coupon | null>(() => {
     const savedCoupon = localStorage.getItem('dluxe_coupon');
     return savedCoupon ? JSON.parse(savedCoupon) : null;
   });
-
+ 
   // Keep localStorage updated
   useEffect(() => {
     localStorage.setItem('dluxe_cart', JSON.stringify(cart));
   }, [cart]);
-
+ 
   useEffect(() => {
     localStorage.setItem('dluxe_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
-
+ 
   useEffect(() => {
     localStorage.setItem('dluxe_rv', JSON.stringify(recentlyViewed));
   }, [recentlyViewed]);
-
+ 
   useEffect(() => {
     if (activeCoupon) {
       localStorage.setItem('dluxe_coupon', JSON.stringify(activeCoupon));
@@ -75,8 +75,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem('dluxe_coupon');
     }
   }, [activeCoupon]);
-
-  const addToCart = (
+ 
+  // ✅ FIX: useCallback so function reference stays stable across re-renders
+  const addToCart = useCallback((
     product: Product,
     quantity: number,
     size: string,
@@ -84,7 +85,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     customLength?: string
   ) => {
     setCart((prevCart) => {
-      // Check if item exists with same ID and Size and custom shape/length configurations
       const existingIdx = prevCart.findIndex(
         (item) =>
           item.product.id === product.id &&
@@ -92,7 +92,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           (!customShape || item.selectedShape === customShape) &&
           (!customLength || item.selectedLength === customLength)
       );
-
+ 
       if (existingIdx > -1) {
         const newCart = [...prevCart];
         newCart[existingIdx] = {
@@ -101,7 +101,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         return newCart;
       }
-
+ 
       return [
         ...prevCart,
         {
@@ -113,13 +113,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       ];
     });
-  };
-
-  const removeFromCart = (productId: string, size: string) => {
+  }, []);
+ 
+  // ✅ FIX: useCallback so function reference stays stable across re-renders
+  const removeFromCart = useCallback((productId: string, size: string) => {
     setCart((prevCart) => prevCart.filter((item) => !(item.product.id === productId && item.selectedSize === size)));
-  };
-
-  const updateQuantity = (productId: string, size: string, quantity: number) => {
+  }, []);
+ 
+  // ✅ FIX: useCallback so function reference stays stable across re-renders
+  const updateQuantity = useCallback((productId: string, size: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(productId, size);
       return;
@@ -129,27 +131,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         item.product.id === productId && item.selectedSize === size ? { ...item, quantity } : item
       )
     );
-  };
-
-  const clearCart = () => {
+  }, [removeFromCart]);
+ 
+  const clearCart = useCallback(() => {
     setCart([]);
     setActiveCoupon(null);
-  };
-
-  const toggleWishlist = (productId: string) => {
+  }, []);
+ 
+  // ✅ FIX: useCallback with empty deps — stable reference, no re-renders triggered
+  const toggleWishlist = useCallback((productId: string) => {
     setWishlist((prev) =>
       prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
-  };
-
-  const addToRecentlyViewed = (productId: string) => {
+  }, []);
+ 
+  // ✅ KEY FIX: This was the root cause — new reference on every render triggered
+  // useEffect in ProductDetails, which reset product state mid-navigation
+  const addToRecentlyViewed = useCallback((productId: string) => {
     setRecentlyViewed((prev) => {
       const filtered = prev.filter((id) => id !== productId);
-      return [productId, ...filtered].slice(0, 5); // Keep last 5
+      return [productId, ...filtered].slice(0, 5);
     });
-  };
-
-  const applyCoupon = (code: string) => {
+  }, []);
+ 
+  const applyCoupon = useCallback((code: string) => {
     const coupon = activeCoupons.find((c) => c.code.toUpperCase() === code.toUpperCase());
     if (!coupon) {
       return { success: false, message: 'Invalid coupon code.' };
@@ -163,17 +168,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setActiveCoupon(coupon);
     return { success: true, message: `Coupon "${coupon.code}" applied successfully!` };
-  };
-
-  const removeCoupon = () => {
+  }, [cart]);
+ 
+  const removeCoupon = useCallback(() => {
     setActiveCoupon(null);
-  };
-
+  }, []);
+ 
   // Derive pricing values
   const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-
   const shippingCharge = subtotal >= 1499 || subtotal === 0 ? 0 : 80;
-
+ 
   let discountAmount = 0;
   if (activeCoupon) {
     if (activeCoupon.discountType === 'percentage') {
@@ -181,14 +185,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else if (activeCoupon.discountType === 'fixed') {
       discountAmount = activeCoupon.discountValue;
     }
-    // Make sure discount is not more than subtotal
     if (discountAmount > subtotal) {
       discountAmount = subtotal;
     }
   }
-
+ 
   const total = subtotal - discountAmount + shippingCharge;
-
+ 
   return (
     <CartContext.Provider
       value={{

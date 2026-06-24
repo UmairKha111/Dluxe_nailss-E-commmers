@@ -94,16 +94,17 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Hero Right Banner Image */}
-          <div className="lg:col-span-7 relative">
-            <div className="absolute inset-0 bg-luxury-beige-300 rounded-lg transform rotate-2 -z-10 scale-[1.01]" />
-            <div className="relative overflow-hidden rounded-lg shadow-2xl border border-luxury-beige-300 bg-stone-100">
-              <img
-                src="/src/assets/images/d_luxe_nails_hero_banner_1781850750589.jpg"
-                alt="D Luxe Nails Exquisite Manicure Display Banner"
-                referrerPolicy="no-referrer"
-                className="w-full h-auto object-cover min-h-[300px] md:min-h-[450px]"
-              />
-              
+        <div className="lg:col-span-7 relative">
+  <div className="absolute inset-0 bg-luxury-beige-300 rounded-lg transform rotate-2 -z-10 scale-[1.01]" />
+
+  <div className="relative overflow-hidden rounded-lg shadow-2xl border border-luxury-beige-300 bg-stone-100">
+    <img
+      src="https://i.ibb.co/JwJ4vfgj/d-luxe-nails-hero-banner-1781850750589.jpg"
+      alt="D Luxe Nails Exquisite Manicure Display Banner"
+      referrerPolicy="no-referrer"
+      className="w-full h-auto object-cover min-h-[300px] md:min-h-[450px]"
+    />
+       
               {/* Overlaid caption badge */}
               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded shadow border border-luxury-beige-300/40 max-w-[220px]">
                 <p className="font-serif italic text-xs font-bold text-luxury-charcoal">"Custom fits so perfect people won't believe they are false."</p>

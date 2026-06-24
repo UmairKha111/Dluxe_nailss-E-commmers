@@ -6,12 +6,12 @@ import { siteConfig } from '../data/siteConfig';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 import { ProductCard } from '../components/products/ProductCard';
-
+ 
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart, wishlist, toggleWishlist, addToRecentlyViewed, recentlyViewed } = useCart();
-
+ 
   const [product, setProduct] = useState<Product | null>(null);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [selectedSize, setSelectedSize] = useState('M');
@@ -20,8 +20,12 @@ export const ProductDetails: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'application' | 'shipping'>('details');
-
-  // Load product & record recently viewed
+ 
+  // ✅ FIX: Only 'id' in dependency array — addToRecentlyViewed removed
+  // Previously, addToRecentlyViewed was listed as a dependency. Every time cart
+  // updated (e.g. on addToCart), CartProvider re-rendered and created a new
+  // addToRecentlyViewed reference, which triggered this useEffect again,
+  // resetting product state and interrupting navigation to /checkout.
   useEffect(() => {
     if (id) {
       const found = products.find((p) => p.id === id);
@@ -35,12 +39,11 @@ export const ProductDetails: React.FC = () => {
         setJustAdded(false);
         addToRecentlyViewed(found.id);
       } else {
-        // Fallback
         setProduct(products[0]);
       }
     }
-  }, [id, addToRecentlyViewed]);
-
+  }, [id]); // ✅ Only 'id' here — stable now
+ 
   if (!product) {
     return (
       <div className="py-24 text-center text-xs text-stone-500 font-mono">
@@ -48,7 +51,7 @@ export const ProductDetails: React.FC = () => {
       </div>
     );
   }
-
+ 
   const handleAddToCart = () => {
     addToCart(product, quantity, selectedSize, selectedShape, selectedLength);
     setJustAdded(true);
@@ -56,25 +59,27 @@ export const ProductDetails: React.FC = () => {
       setJustAdded(false);
     }, 2500);
   };
-
+ 
+  // ✅ This now works correctly — cart updates, but useEffect no longer re-runs
+  // so product state is NOT reset and navigate('/checkout') executes cleanly
   const handleBuyNow = () => {
     addToCart(product, quantity, selectedSize, selectedShape, selectedLength);
     navigate('/checkout');
   };
-
+ 
   // Filter recently viewed ids to actual products, excluding active
   const recentProductsList = recentlyViewed
     .map((rvId) => products.find((p) => p.id === rvId))
     .filter((p): p is Product => p !== undefined && p.id !== product.id)
     .slice(0, 4);
-
+ 
   // Filter related products (same category)
   const relatedProducts = products
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
-
+ 
   const isWishlisted = wishlist.includes(product.id);
-
+ 
   return (
     <div id="product-details-container" className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-16">
       
@@ -88,7 +93,7 @@ export const ProductDetails: React.FC = () => {
           <span>Back to All Collections</span>
         </Link>
       </div>
-
+ 
       {/* CORE INFO COLS */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
@@ -104,7 +109,7 @@ export const ProductDetails: React.FC = () => {
             >
               <Heart size={18} className={isWishlisted ? 'fill-red-500 text-red-500' : ''} />
             </button>
-
+ 
             {/* Badges overlay */}
             {product.badges && product.badges.length > 0 && (
               <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
@@ -118,7 +123,7 @@ export const ProductDetails: React.FC = () => {
                 ))}
               </div>
             )}
-
+ 
             <img
               src={product.images[activeImageIdx]}
               alt={product.name}
@@ -126,7 +131,7 @@ export const ProductDetails: React.FC = () => {
               className="w-full h-full object-cover text-[10px]"
             />
           </div>
-
+ 
           {/* Gallery Thumbnails List */}
           <div className="flex gap-2.5 overflow-x-auto pb-1">
             {product.images.map((img, idx) => (
@@ -147,7 +152,7 @@ export const ProductDetails: React.FC = () => {
               </button>
             ))}
           </div>
-
+ 
           <div className="bg-luxury-beige-200/60 border border-luxury-beige-300 rounded p-4 flex items-center space-x-3 text-xs tracking-wide">
             <span className="p-2 bg-white rounded-full text-luxury-gold">
               <Sparkles size={16} />
@@ -157,7 +162,7 @@ export const ProductDetails: React.FC = () => {
             </p>
           </div>
         </div>
-
+ 
         {/* Right Col: Customizer Details (Span 6) */}
         <div className="lg:col-span-6 space-y-6">
           <div className="space-y-2">
@@ -167,7 +172,7 @@ export const ProductDetails: React.FC = () => {
             <h1 className="text-2xl md:text-3.5xl font-serif font-bold text-luxury-charcoal leading-tight tracking-wide">
               {product.name}
             </h1>
-
+ 
             {/* Rating */}
             <div className="flex items-center space-x-2 mt-2">
               <div className="flex text-amber-400">
@@ -184,7 +189,7 @@ export const ProductDetails: React.FC = () => {
               </span>
             </div>
           </div>
-
+ 
           {/* Price Box */}
           <div className="bg-luxury-beige-200/50 p-4 border border-luxury-beige-300 rounded flex items-baseline space-x-3">
             <span className="text-3xl font-mono font-bold text-luxury-charcoal">
@@ -201,11 +206,11 @@ export const ProductDetails: React.FC = () => {
               </span>
             )}
           </div>
-
+ 
           <p className="text-xs text-stone-605 leading-relaxed">
             {product.description}
           </p>
-
+ 
           {/* CUSTOMIZER SELECTIONS Grid */}
           <div className="space-y-4 pt-4 border-t border-stone-200/75">
             {/* Shapes selection slider */}
@@ -230,7 +235,7 @@ export const ProductDetails: React.FC = () => {
                 ))}
               </div>
             </div>
-
+ 
             {/* Length selectors */}
             <div>
               <div className="flex justify-between items-center text-xs font-semibold mb-2">
@@ -253,7 +258,7 @@ export const ProductDetails: React.FC = () => {
                 ))}
               </div>
             </div>
-
+ 
             {/* Standard Sizes parameters with prompt size chart helper link */}
             <div>
               <div className="flex justify-between items-center text-xs font-semibold mb-2">
@@ -289,7 +294,7 @@ export const ProductDetails: React.FC = () => {
               </div>
             </div>
           </div>
-
+ 
           {/* QUANTITY AND ADDTOCART CTAs */}
           <div className="pt-6 border-t border-stone-200/75 flex flex-col space-y-4">
             <div className="flex items-center space-x-4">
@@ -312,7 +317,7 @@ export const ProductDetails: React.FC = () => {
                 </button>
               </div>
             </div>
-
+ 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <button
                 type="button"
@@ -327,7 +332,7 @@ export const ProductDetails: React.FC = () => {
                 {justAdded ? <Check size={14} /> : <ShoppingBag size={14} />}
                 <span>{justAdded ? 'Added to Luxury Bag!' : 'Add to Bag'}</span>
               </button>
-
+ 
               <button
                 type="button"
                 onClick={handleBuyNow}
@@ -337,7 +342,7 @@ export const ProductDetails: React.FC = () => {
               </button>
             </div>
           </div>
-
+ 
           {/* TRUSTED DELIVERY BADGES */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 py-4 border-y border-stone-100">
             <div className="flex items-center space-x-2 text-stone-500 font-mono text-[10px]">
@@ -353,12 +358,12 @@ export const ProductDetails: React.FC = () => {
               <span>Reusable & sturdy</span>
             </div>
           </div>
-
+ 
         </div>
-
+ 
       </div>
-
-      {/* CORE SPECIFICATIONS TABS (Single detail manuals, Application tutorials, policy specs) */}
+ 
+      {/* CORE SPECIFICATIONS TABS */}
       <section className="bg-white border border-luxury-beige-200 rounded p-6 md:p-8 space-y-6">
         {/* Tab Headers */}
         <div className="flex border-b border-luxury-beige-200 text-xs md:text-sm font-semibold space-x-6">
@@ -387,7 +392,7 @@ export const ProductDetails: React.FC = () => {
             Shipping & Return policies
           </button>
         </div>
-
+ 
         {/* Tab Panels */}
         <div className="text-xs text-stone-650 leading-relaxed md:text-stone-700">
           
@@ -405,10 +410,9 @@ export const ProductDetails: React.FC = () => {
               </ul>
             </div>
           )}
-
+ 
           {activeTab === 'application' && (
             <div className="space-y-6">
-              
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <span className="font-serif font-bold italic text-luxury-gold text-lg">01. PREPARATION</span>
@@ -429,17 +433,16 @@ export const ProductDetails: React.FC = () => {
                   </p>
                 </div>
               </div>
-
+ 
               <div className="bg-amber-50 border border-amber-200 rounded p-4 flex items-start space-x-2">
                 <AlertCircle size={15} className="text-amber-600 mt-0.5 shrink-0" />
                 <div className="text-[11px] leading-normal text-stone-650">
                   <strong>Damage-Free Removal Tutorial:</strong> Soak hands in clean warm water topped with soap baby-oil (or cuticle drops) for 10-15 minutes. Gently insert the wooden cuticle stick under the side edges to leverage, sliding the tips off smoothly. Never pry or force them off, as this stretches your natural keratin layers. Clean residue from backs of press-ons with a buffer and store back safely for future wear!
                 </div>
               </div>
-
             </div>
           )}
-
+ 
           {activeTab === 'shipping' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
@@ -462,10 +465,9 @@ export const ProductDetails: React.FC = () => {
               </div>
             </div>
           )}
-
         </div>
       </section>
-
+ 
       {/* RELATED PRODUCTS */}
       {relatedProducts.length > 0 && (
         <section className="space-y-6">
@@ -480,7 +482,7 @@ export const ProductDetails: React.FC = () => {
           </div>
         </section>
       )}
-
+ 
       {/* RECENTLY VIEWED ROW */}
       {recentProductsList.length > 0 && (
         <section className="space-y-6 border-t border-luxury-beige-300 pt-12">
@@ -490,12 +492,12 @@ export const ProductDetails: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {recentProductsList.map((p) => (
-               <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </section>
       )}
-
+ 
     </div>
   );
 };
