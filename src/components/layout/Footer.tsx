@@ -207,12 +207,29 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Made by section */}
-        <div className="border-t border-stone-800/50 pt-4 flex flex-col sm:flex-row items-center justify-between text-[10px] text-stone-600 font-mono">
-          <p>&copy; 2026 {siteConfig.brandName}. All rights reserved.</p>
-          <p className="mt-1 sm:mt-0">
-            Handcrafted with 🤍 in Navsari · Made by <span className="text-stone-500 hover:text-luxury-gold">D Luxe Nails Studio</span>
-          </p>
-        </div>
+       {/* Made by section */}
+<div className="border-t border-stone-800/50 pt-4 flex flex-col sm:flex-row items-center justify-between text-[10px] text-stone-600 font-mono">
+
+  <p>
+    &copy; 2026 {siteConfig.brandName}. All rights reserved.
+  </p>
+
+  <p className="mt-1 sm:mt-0 flex flex-wrap items-center justify-center gap-1 text-center">
+
+    <span>Handcrafted with 🤍 in Navsari · </span>
+
+    <a
+      href="https://umanztechnology.in"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-luxury-gold hover:text-luxury-rosegold hover:underline transition duration-300 font-semibold"
+    >
+     Crafted by  Umanz Technology
+    </a>
+
+  </p>
+
+</div>
 
       </div>
     </footer>
