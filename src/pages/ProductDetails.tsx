@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, Heart, ShoppingBag, Truck, ShieldCheck, RefreshCw, Layers, Check, Sparkles, MessageCircle, ArrowLeft, BookOpen, AlertCircle } from 'lucide-react';
+import {
+  Star, Heart, ShoppingBag, Truck, ShieldCheck,
+  RefreshCw, Layers, Check, Sparkles, MessageCircle,
+  ArrowLeft, BookOpen, AlertCircle,
+} from 'lucide-react';
 import { products } from '../data/products';
 import { siteConfig } from '../data/siteConfig';
 import { useCart } from '../context/CartContext';
@@ -10,31 +14,24 @@ import { ProductCard } from '../components/products/ProductCard';
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addToCart, wishlist, toggleWishlist, addToRecentlyViewed, recentlyViewed } = useCart();
+  const {
+    addToCart, wishlist, toggleWishlist,
+    addToRecentlyViewed, recentlyViewed,
+  } = useCart();
  
   const [product, setProduct] = useState<Product | null>(null);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
-  const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedShape, setSelectedShape] = useState('');
-  const [selectedLength, setSelectedLength] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'application' | 'shipping'>('details');
  
-  // ✅ FIX: Only 'id' in dependency array — addToRecentlyViewed removed
-  // Previously, addToRecentlyViewed was listed as a dependency. Every time cart
-  // updated (e.g. on addToCart), CartProvider re-rendered and created a new
-  // addToRecentlyViewed reference, which triggered this useEffect again,
-  // resetting product state and interrupting navigation to /checkout.
+  // ✅ Only 'id' in deps — stable, no re-render loop
   useEffect(() => {
     if (id) {
       const found = products.find((p) => p.id === id);
       if (found) {
         setProduct(found);
         setActiveImageIdx(0);
-        setSelectedSize('M');
-        setSelectedShape(found.shape);
-        setSelectedLength(found.length);
         setQuantity(1);
         setJustAdded(false);
         addToRecentlyViewed(found.id);
@@ -42,7 +39,7 @@ export const ProductDetails: React.FC = () => {
         setProduct(products[0]);
       }
     }
-  }, [id]); // ✅ Only 'id' here — stable now
+  }, [id]);
  
   if (!product) {
     return (
@@ -52,28 +49,23 @@ export const ProductDetails: React.FC = () => {
     );
   }
  
+  // Default size 'M', shape & length taken from product data
   const handleAddToCart = () => {
-    addToCart(product, quantity, selectedSize, selectedShape, selectedLength);
+    addToCart(product, quantity, 'M', product.shape, product.length);
     setJustAdded(true);
-    setTimeout(() => {
-      setJustAdded(false);
-    }, 2500);
+    setTimeout(() => setJustAdded(false), 2500);
   };
  
-  // ✅ This now works correctly — cart updates, but useEffect no longer re-runs
-  // so product state is NOT reset and navigate('/checkout') executes cleanly
   const handleBuyNow = () => {
-    addToCart(product, quantity, selectedSize, selectedShape, selectedLength);
+    addToCart(product, quantity, 'M', product.shape, product.length);
     navigate('/checkout');
   };
  
-  // Filter recently viewed ids to actual products, excluding active
   const recentProductsList = recentlyViewed
     .map((rvId) => products.find((p) => p.id === rvId))
     .filter((p): p is Product => p !== undefined && p.id !== product.id)
     .slice(0, 4);
  
-  // Filter related products (same category)
   const relatedProducts = products
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
@@ -81,8 +73,10 @@ export const ProductDetails: React.FC = () => {
   const isWishlisted = wishlist.includes(product.id);
  
   return (
-    <div id="product-details-container" className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-16">
-      
+    <div
+      id="product-details-container"
+      className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-16"
+    >
       {/* Back button */}
       <div>
         <Link
@@ -94,14 +88,14 @@ export const ProductDetails: React.FC = () => {
         </Link>
       </div>
  
-      {/* CORE INFO COLS */}
+      {/* ── MAIN GRID ───────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        
-        {/* Left Col: Image Gallery (Span 6) */}
+ 
+        {/* LEFT: Image Gallery */}
         <div className="lg:col-span-6 space-y-4">
           <div className="relative aspect-square overflow-hidden bg-luxury-beige-100 border border-luxury-beige-300 rounded shadow-xs">
-            
-            {/* Wishlist Heart action button */}
+ 
+            {/* Wishlist */}
             <button
               onClick={() => toggleWishlist(product.id)}
               className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white text-stone-500 hover:text-red-500 hover:scale-105 active:scale-95 shadow-md transition-all"
@@ -110,7 +104,7 @@ export const ProductDetails: React.FC = () => {
               <Heart size={18} className={isWishlisted ? 'fill-red-500 text-red-500' : ''} />
             </button>
  
-            {/* Badges overlay */}
+            {/* Badges */}
             {product.badges && product.badges.length > 0 && (
               <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
                 {product.badges.map((b) => (
@@ -132,7 +126,7 @@ export const ProductDetails: React.FC = () => {
             />
           </div>
  
-          {/* Gallery Thumbnails List */}
+          {/* Thumbnails */}
           <div className="flex gap-2.5 overflow-x-auto pb-1">
             {product.images.map((img, idx) => (
               <button
@@ -140,7 +134,9 @@ export const ProductDetails: React.FC = () => {
                 type="button"
                 onClick={() => setActiveImageIdx(idx)}
                 className={`w-16 h-16 rounded overflow-hidden border-2 transition ${
-                  idx === activeImageIdx ? 'border-luxury-gold bg-stone-50 shadow-md' : 'border-stone-200 opacity-70 hover:opacity-100'
+                  idx === activeImageIdx
+                    ? 'border-luxury-gold bg-stone-50 shadow-md'
+                    : 'border-stone-200 opacity-70 hover:opacity-100'
                 }`}
               >
                 <img
@@ -153,27 +149,30 @@ export const ProductDetails: React.FC = () => {
             ))}
           </div>
  
+          {/* Premium box banner */}
           <div className="bg-luxury-beige-200/60 border border-luxury-beige-300 rounded p-4 flex items-center space-x-3 text-xs tracking-wide">
             <span className="p-2 bg-white rounded-full text-luxury-gold">
               <Sparkles size={16} />
             </span>
             <p className="text-stone-700 leading-normal">
-              <strong>Premium Artist Box</strong>: Each set includes raw structural acrylic tips, curated double-layer base coatings, custom detail paints, and a 6-pc preparation toolkit free.
+              <strong>Premium Artist Box</strong>: Each set includes raw structural
+              acrylic tips, curated double-layer base coatings, custom detail
+              paints, and a 6-pc preparation toolkit free.
             </p>
           </div>
         </div>
  
-        {/* Right Col: Customizer Details (Span 6) */}
+        {/* RIGHT: Product Info */}
         <div className="lg:col-span-6 space-y-6">
+ 
+          {/* Name & rating */}
           <div className="space-y-2">
             <span className="text-[10px] uppercase font-mono font-bold text-luxury-gold tracking-[0.25em] block">
               {product.category} Series
             </span>
-            <h1 className="text-2xl md:text-3.5xl font-serif font-bold text-luxury-charcoal leading-tight tracking-wide">
+            <h1 className="text-2xl md:text-3xl font-serif font-bold text-luxury-charcoal leading-tight tracking-wide">
               {product.name}
             </h1>
- 
-            {/* Rating */}
             <div className="flex items-center space-x-2 mt-2">
               <div className="flex text-amber-400">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -190,112 +189,62 @@ export const ProductDetails: React.FC = () => {
             </div>
           </div>
  
-          {/* Price Box */}
+          {/* Price */}
           <div className="bg-luxury-beige-200/50 p-4 border border-luxury-beige-300 rounded flex items-baseline space-x-3">
             <span className="text-3xl font-mono font-bold text-luxury-charcoal">
               ₹{product.price.toLocaleString('en-IN')}
             </span>
             {product.originalPrice && (
-              <span className="text-sm line-through text-stone-400 font-mono">
-                ₹{product.originalPrice.toLocaleString('en-IN')}
-              </span>
-            )}
-            {product.originalPrice && (
-              <span className="text-xs text-red-650 bg-red-50 border border-red-105 px-2 py-0.5 rounded font-mono font-bold">
-                SAVE ₹{product.originalPrice - product.price} ({Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF)
-              </span>
-            )}
-          </div>
- 
-          <p className="text-xs text-stone-605 leading-relaxed">
-            {product.description}
-          </p>
- 
-          {/* CUSTOMIZER SELECTIONS Grid */}
-          <div className="space-y-4 pt-4 border-t border-stone-200/75">
-            {/* Shapes selection slider */}
-            <div>
-              <div className="flex justify-between items-center text-xs font-semibold mb-2">
-                <span>1. Customize Shape:</span>
-                <span className="text-luxury-gold font-mono uppercase text-[10px]">{selectedShape} Shape</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {['Almond', 'Square', 'Coffin', 'Stiletto', 'Round', 'Oval'].map((shapeOpt) => (
-                  <button
-                    key={shapeOpt}
-                    onClick={() => setSelectedShape(shapeOpt)}
-                    className={`text-[11px] font-medium px-4 py-1.5 rounded-full border transition ${
-                      selectedShape === shapeOpt
-                        ? 'bg-luxury-charcoal text-white border-luxury-charcoal shadow-sm'
-                        : 'bg-white border-stone-200 text-stone-600 hover:border-luxury-beige-400'
-                    }`}
-                  >
-                    {shapeOpt}
-                  </button>
-                ))}
-              </div>
-            </div>
- 
-            {/* Length selectors */}
-            <div>
-              <div className="flex justify-between items-center text-xs font-semibold mb-2">
-                <span>2. Customize Length:</span>
-                <span className="text-luxury-gold font-mono uppercase text-[10px]">{selectedLength} length</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {['Short', 'Medium', 'Long', 'Extra Long'].map((lenOpt) => (
-                  <button
-                    key={lenOpt}
-                    onClick={() => setSelectedLength(lenOpt)}
-                    className={`text-[11px] font-medium px-4 py-1.5 rounded-full border transition ${
-                      selectedLength === lenOpt
-                        ? 'bg-luxury-charcoal text-white border-luxury-charcoal shadow-sm'
-                        : 'bg-white border-stone-200 text-stone-600 hover:border-luxury-beige-400'
-                    }`}
-                  >
-                    {lenOpt}
-                  </button>
-                ))}
-              </div>
-            </div>
- 
-            {/* Standard Sizes parameters with prompt size chart helper link */}
-            <div>
-              <div className="flex justify-between items-center text-xs font-semibold mb-2">
-                <span className="flex items-center space-x-1">
-                  <span>3. Choose Sizing Box:</span>
-                  <Link to="/about" className="text-[10px] text-luxury-gold hover:underline font-mono">
-                    (Millimeter charts)
-                  </Link>
+              <>
+                <span className="text-sm line-through text-stone-400 font-mono">
+                  ₹{product.originalPrice.toLocaleString('en-IN')}
                 </span>
-                <span className="text-stone-500 font-mono text-[10px]">Active Box: {selectedSize}</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {product.sizes?.map((szOpt) => (
-                  <button
-                    key={szOpt}
-                    onClick={() => setSelectedSize(szOpt)}
-                    className={`w-12 h-9 text-xs font-bold rounded font-mono border transition ${
-                      selectedSize === szOpt
-                        ? 'bg-luxury-gold text-white border-luxury-gold shadow-xs'
-                        : 'bg-white border-stone-200 text-stone-650 hover:border-luxury-beige-400'
-                    }`}
-                  >
-                    {szOpt}
-                  </button>
-                ))}
-              </div>
-              <div className="bg-luxury-beige-100 p-2.5 rounded border border-luxury-beige-200 text-[10px] text-stone-500 italic mt-2 font-mono">
-                {selectedSize === 'XS' && 'Fits: Thumb 14mm · Index 10mm · Middle 11mm · Ring 10mm · Pinky 8mm'}
-                {selectedSize === 'S' && 'Fits: Thumb 15mm · Index 11mm · Middle 12mm · Ring 11mm · Pinky 9mm'}
-                {selectedSize === 'M' && 'Fits: Thumb 16mm · Index 12mm · Middle 13mm · Ring 12mm · Pinky 10mm'}
-                {selectedSize === 'L' && 'Fits: Thumb 18mm · Index 13mm · Middle 14mm · Ring 13mm · Pinky 11mm'}
-                {selectedSize === 'Custom' && 'Choose "Custom" if you do not fit standard boxes. Tape natural nails, mark widest points with a standard ruler in millimeters and write those measures at checkout order details note!'}
-              </div>
-            </div>
+                <span className="text-xs text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded font-mono font-bold">
+                  SAVE ₹{product.originalPrice - product.price} (
+                  {Math.round(
+                    ((product.originalPrice - product.price) / product.originalPrice) * 100,
+                  )}
+                  % OFF)
+                </span>
+              </>
+            )}
           </div>
  
-          {/* QUANTITY AND ADDTOCART CTAs */}
+          {/* Description */}
+          <p className="text-xs text-stone-600 leading-relaxed">{product.description}</p>
+ 
+          {/* ── WHATSAPP SIZE HELP ONLY ─────────────────────
+           *   Removed:
+           *   • Customize Shape (Almond / Square / Coffin…)
+           *   • Customize Length (Short / Medium / Long…)
+           *   • Choose Sizing Box (XS / S / M / L / Custom)
+           *   Kept:
+           *   • WhatsApp "Discuss Size" button ✅
+           * ──────────────────────────────────────────────── */}
+          <div className="pt-4 border-t border-stone-200/75">
+            <a
+              href={`https://wa.me/${siteConfig.whatsapp || siteConfig.phone}?text=${encodeURIComponent(
+                'Hi! I need help choosing the right sizing box for my press-on nails.',
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white text-[11px] font-semibold px-4 py-2 rounded-full transition shadow-sm"
+            >
+              {/* WhatsApp icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-3.5 h-3.5"
+              >
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.526 5.847L.057 23.571a.75.75 0 00.921.921l5.724-1.469A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.726 9.726 0 01-4.952-1.355l-.355-.211-3.669.941.957-3.556-.231-.366A9.722 9.722 0 012.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z" />
+              </svg>
+              <span>Discuss Size on WhatsApp</span>
+            </a>
+          </div>
+ 
+          {/* ── QUANTITY + ADD TO CART + BUY NOW ────────── */}
           <div className="pt-6 border-t border-stone-200/75 flex flex-col space-y-4">
             <div className="flex items-center space-x-4">
               <span className="text-xs font-semibold">Quantity:</span>
@@ -343,7 +292,7 @@ export const ProductDetails: React.FC = () => {
             </div>
           </div>
  
-          {/* TRUSTED DELIVERY BADGES */}
+          {/* Delivery badges */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 py-4 border-y border-stone-100">
             <div className="flex items-center space-x-2 text-stone-500 font-mono text-[10px]">
               <Truck size={14} className="text-luxury-gold" />
@@ -360,53 +309,42 @@ export const ProductDetails: React.FC = () => {
           </div>
  
         </div>
- 
       </div>
  
-      {/* CORE SPECIFICATIONS TABS */}
+      {/* ── TABS ────────────────────────────────────────── */}
       <section className="bg-white border border-luxury-beige-200 rounded p-6 md:p-8 space-y-6">
-        {/* Tab Headers */}
         <div className="flex border-b border-luxury-beige-200 text-xs md:text-sm font-semibold space-x-6">
-          <button
-            onClick={() => setActiveTab('details')}
-            className={`pb-3.5 transition-all relative ${
-              activeTab === 'details' ? 'text-luxury-gold-dark font-bold border-b-2 border-luxury-gold' : 'text-stone-400 hover:text-stone-700'
-            }`}
-          >
-            Nail Details & Features
-          </button>
-          <button
-            onClick={() => setActiveTab('application')}
-            className={`pb-3.5 transition-all relative ${
-              activeTab === 'application' ? 'text-luxury-gold-dark font-bold border-b-2 border-luxury-gold' : 'text-stone-400 hover:text-stone-700'
-            }`}
-          >
-            How to Apply & Remove
-          </button>
-          <button
-            onClick={() => setActiveTab('shipping')}
-            className={`pb-3.5 transition-all relative ${
-              activeTab === 'shipping' ? 'text-luxury-gold-dark font-bold border-b-2 border-luxury-gold' : 'text-stone-400 hover:text-stone-700'
-            }`}
-          >
-            Shipping & Return policies
-          </button>
+          {(['details', 'application', 'shipping'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-3.5 transition-all relative capitalize ${
+                activeTab === tab
+                  ? 'text-luxury-gold-dark font-bold border-b-2 border-luxury-gold'
+                  : 'text-stone-400 hover:text-stone-700'
+              }`}
+            >
+              {tab === 'details' && 'Nail Details & Features'}
+              {tab === 'application' && 'How to Apply & Remove'}
+              {tab === 'shipping' && 'Shipping & Return Policies'}
+            </button>
+          ))}
         </div>
  
-        {/* Tab Panels */}
         <div className="text-xs text-stone-650 leading-relaxed md:text-stone-700">
-          
+ 
           {activeTab === 'details' && (
             <div className="space-y-4">
-              <h3 className="font-serif font-bold text-sm text-luxury-charcoal">Design Integrity Specifications</h3>
+              <h3 className="font-serif font-bold text-sm text-luxury-charcoal">
+                Design Integrity Specifications
+              </h3>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 list-disc pl-4 font-normal">
                 {product.features.map((feature, idx) => (
                   <li key={idx}>{feature}</li>
                 ))}
-                <li>Entirely handcrafted from start to finish by master artists using premium full-cover tips (no thin plastics).</li>
-                <li>Multiple coats of Japanese builder gel and non-wipe scratch-resistant gloss coatings applied to secure structural apex depth.</li>
-                <li>Washed, sterilized, pre-conditioned with medical pads, and packaged inside our signature rustic-beige gift boxes.</li>
-                <li>Custom configurations for shape (6 options) and length (4 options) fully respected.</li>
+                <li>Entirely handcrafted from start to finish by master artists using premium full-cover tips.</li>
+                <li>Multiple coats of Japanese builder gel and non-wipe scratch-resistant gloss coatings.</li>
+                <li>Washed, sterilized, pre-conditioned with medical pads, and packaged inside our signature gift boxes.</li>
               </ul>
             </div>
           )}
@@ -417,19 +355,19 @@ export const ProductDetails: React.FC = () => {
                 <div className="space-y-2">
                   <span className="font-serif font-bold italic text-luxury-gold text-lg">01. PREPARATION</span>
                   <p className="text-[11px] leading-relaxed text-stone-500">
-                    Push your cuticles back gently using the wooden cuticle orange stick. Gently buff the surface of your natural nails to remove oils and moisture, then wipe clean with our medical sterile isopropyl alcohol prep pad. Let dry fully.
+                    Push your cuticles back gently using the wooden cuticle orange stick. Buff the surface of your natural nails to remove oils, then wipe clean with the medical sterile isopropyl alcohol prep pad. Let dry fully.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <span className="font-serif font-bold italic text-luxury-gold text-lg">02. LONG WEAR (2-3 WEEKS)</span>
                   <p className="text-[11px] leading-relaxed text-stone-500">
-                    Apply a mini drop of premium liquid nail glue to the back of the press-on nail, and another drop to your natural nail. Press firmly at a 45-degree angle starting from the cuticle line, holding for 30 seconds continuously with firm weight. Avoid water for 2 hours.
+                    Apply a mini drop of premium liquid nail glue to the back of the press-on nail and to your natural nail. Press firmly at a 45-degree angle from the cuticle line, holding for 30 seconds. Avoid water for 2 hours.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <span className="font-serif font-bold italic text-luxury-gold text-lg">03. SHORT WEAR (1-3 DAYS)</span>
                   <p className="text-[11px] leading-relaxed text-stone-500">
-                    Perfect for temporary events! Select high-strength double-sided adhesive tabs matching your nail coordinates. Peel tab, place directly on your natural nail, smooth flat, remove protective liner, and press nail down with firm weight for 30 seconds.
+                    Select high-strength double-sided adhesive tabs. Peel tab, place on your natural nail, smooth flat, remove protective liner, and press the nail down firmly for 30 seconds.
                   </p>
                 </div>
               </div>
@@ -437,7 +375,7 @@ export const ProductDetails: React.FC = () => {
               <div className="bg-amber-50 border border-amber-200 rounded p-4 flex items-start space-x-2">
                 <AlertCircle size={15} className="text-amber-600 mt-0.5 shrink-0" />
                 <div className="text-[11px] leading-normal text-stone-650">
-                  <strong>Damage-Free Removal Tutorial:</strong> Soak hands in clean warm water topped with soap baby-oil (or cuticle drops) for 10-15 minutes. Gently insert the wooden cuticle stick under the side edges to leverage, sliding the tips off smoothly. Never pry or force them off, as this stretches your natural keratin layers. Clean residue from backs of press-ons with a buffer and store back safely for future wear!
+                  <strong>Damage-Free Removal:</strong> Soak hands in warm soapy water with baby oil for 10–15 minutes. Gently insert the wooden cuticle stick under the side edges to leverage the tips off. Never pry or force them off. Clean residue from backs with a buffer and store for future wear!
                 </div>
               </div>
             </div>
@@ -446,12 +384,12 @@ export const ProductDetails: React.FC = () => {
           {activeTab === 'shipping' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <h4 className="font-bold flex items-center space-x-1.5 text-luxury-charcoal pr-2">
+                <h4 className="font-bold flex items-center space-x-1.5 text-luxury-charcoal">
                   <Truck size={14} className="text-luxury-gold" />
                   <span>Preparing & Shipping Estimates</span>
                 </h4>
                 <p className="text-[11px] text-stone-500 leading-relaxed">
-                  We hand-paint every single press-on set to order in Navsari, Gujarat. Sizing coordinates and shapes dictate individual curing steps. Please allow <strong>3 to 5 business days</strong> for hand-painting preparation. Shipping transit takes an additional 3-5 days depending on location. Tracking coordinates are dispatched to your WhatsApp dynamically.
+                  We hand-paint every single press-on set to order. Please allow <strong>3 to 5 business days</strong> for preparation. Shipping transit takes an additional 3–5 days depending on location. Tracking details are dispatched to your WhatsApp.
                 </p>
               </div>
               <div className="space-y-2">
@@ -460,20 +398,25 @@ export const ProductDetails: React.FC = () => {
                   <span>Sanitary Refund & Return Policy</span>
                 </h4>
                 <p className="text-[11px] text-stone-500 leading-relaxed">
-                  Due to strictly cosmetic and intimate sanitary hygiene standardizations, completely handcrafted press-on nails cannot be returned or refunded once manufactured to your custom parameters. We highly encourage measuring natural widths using our millimeter guidelines before submitting orders.
+                  Due to cosmetic and sanitary hygiene standardizations, handcrafted press-on nails cannot be returned or refunded once manufactured to your custom parameters. We encourage measuring natural widths using our millimeter guidelines before ordering.
                 </p>
               </div>
             </div>
           )}
+ 
         </div>
       </section>
  
-      {/* RELATED PRODUCTS */}
+      {/* Related products */}
       {relatedProducts.length > 0 && (
         <section className="space-y-6">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-mono text-luxury-gold tracking-widest font-semibold block">Stylized Matches</span>
-            <h2 className="text-xl md:text-2xl font-serif font-bold text-luxury-charcoal tracking-wide">Matches from same category</h2>
+            <span className="text-[10px] uppercase font-mono text-luxury-gold tracking-widest font-semibold block">
+              Stylized Matches
+            </span>
+            <h2 className="text-xl md:text-2xl font-serif font-bold text-luxury-charcoal tracking-wide">
+              Matches from same category
+            </h2>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {relatedProducts.map((p) => (
@@ -483,12 +426,16 @@ export const ProductDetails: React.FC = () => {
         </section>
       )}
  
-      {/* RECENTLY VIEWED ROW */}
+      {/* Recently viewed */}
       {recentProductsList.length > 0 && (
         <section className="space-y-6 border-t border-luxury-beige-300 pt-12">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-mono text-luxury-gold tracking-widest font-semibold block">Inspire Radar</span>
-            <h2 className="text-xl md:text-2xl font-serif font-bold text-luxury-charcoal tracking-wide">Recently Viewed Sets</h2>
+            <span className="text-[10px] uppercase font-mono text-luxury-gold tracking-widest font-semibold block">
+              Inspire Radar
+            </span>
+            <h2 className="text-xl md:text-2xl font-serif font-bold text-luxury-charcoal tracking-wide">
+              Recently Viewed Sets
+            </h2>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {recentProductsList.map((p) => (
