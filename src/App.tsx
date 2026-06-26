@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -20,13 +20,11 @@ export default function App() {
     <Router>
       <CartProvider>
         <div className="flex flex-col min-h-screen bg-luxury-beige-100 font-sans antialiased text-luxury-charcoal selection:bg-luxury-beige-300 selection:text-luxury-charcoal">
-          {/* Scroll context helper (resets window offsets on route switches) */}
+          
           <ScrollToTop />
-          
-          {/* Sticky Header with integrated shopping bag drawers & announcements */}
+
           <Header />
-          
-          {/* Active page router portal */}
+
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -37,20 +35,15 @@ export default function App() {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />
-              
-              {/* Fallback navigation security */}
+
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
 
-          {/* Core dialog drawer for quick summaries size guides */}
           <QuickViewModal />
-
-          {/* Bottom elements */}
           <FloatingWhatsApp />
-          
-          {/* Luxury Footer */}
           <Footer />
+
         </div>
       </CartProvider>
     </Router>
